@@ -1,0 +1,661 @@
+{
+  "name": "test",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "AI Resume Tailor",
+        "formDescription": "Upload your resume and provide a job — either paste the description or drop a LinkedIn job URL.",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "full_name",
+              "fieldLabel": "Your Full Name",
+              "placeholder": "e.g. Jane Smith",
+              "requiredField": true
+            },
+            {
+              "fieldName": "job_title",
+              "fieldLabel": "Target Job Title",
+              "placeholder": "e.g. Senior Product Manager",
+              "requiredField": true
+            },
+            {
+              "fieldName": "input_type",
+              "fieldLabel": "How will you provide the job details?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Paste job description"
+                  },
+                  {
+                    "option": "LinkedIn job URL"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldName": "job_description",
+              "fieldLabel": "Job Description (paste here if selected above)",
+              "fieldType": "textarea",
+              "placeholder": "Paste the full job description here..."
+            },
+            {
+              "fieldName": "linkedin_url",
+              "fieldLabel": "LinkedIn Job URL (paste here if selected above)",
+              "placeholder": "https://www.linkedin.com/jobs/view/..."
+            },
+            {
+              "fieldName": "resume_pdf",
+              "fieldLabel": "Upload Your Resume (PDF only)",
+              "fieldType": "file",
+              "acceptFileTypes": ".pdf",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "customCss": ":root {\n  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;\n  --bg: #f0f2f5;\n  --card: #ffffff;\n  --text: #111827;\n  --muted: #6b7280;\n  --accent: #4f46e5;\n  --accent-hover: #4338ca;\n  --radius: 16px;\n  --input-radius: 10px;\n}\n\nbody {\n  font-family: var(--font);\n  background: var(--bg);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  min-height: 100vh;\n  margin: 0;\n}\n\n.n8n-form-card {\n  background: var(--card);\n  border-radius: var(--radius);\n  box-shadow: 0 4px 24px rgba(0,0,0,0.08);\n  padding: 48px !important;\n  border: none !important;\n  max-width: 540px;\n  width: 100%;\n  animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1);\n}\n\n@keyframes fadeUp {\n  from { opacity:0; transform: translateY(16px); }\n  to   { opacity:1; transform: translateY(0); }\n}\n\n.n8n-form-title {\n  font-size: 26px !important;\n  font-weight: 700 !important;\n  letter-spacing: -0.02em !important;\n  color: var(--text) !important;\n  text-align: center;\n  margin-bottom: 6px !important;\n}\n\n.n8n-form-description {\n  font-size: 14px !important;\n  color: var(--muted) !important;\n  text-align: center;\n  margin-bottom: 36px !important;\n  line-height: 1.6;\n}\n\nlabel {\n  font-size: 13px !important;\n  font-weight: 600 !important;\n  color: var(--text) !important;\n  margin-bottom: 6px !important;\n  display: block;\n}\n\ninput, textarea, select {\n  background: #f9fafb !important;\n  border: 1.5px solid #e5e7eb !important;\n  border-radius: var(--input-radius) !important;\n  padding: 12px 14px !important;\n  font-size: 14px !important;\n  color: var(--text) !important;\n  width: 100%;\n  transition: border-color 0.2s, box-shadow 0.2s;\n  box-sizing: border-box;\n}\n\ninput:focus, textarea:focus, select:focus {\n  border-color: var(--accent) !important;\n  background: #fff !important;\n  box-shadow: 0 0 0 3px rgba(79,70,229,0.12) !important;\n  outline: none;\n}\n\ntextarea { min-height: 130px; resize: vertical; }\n\nbutton[type='submit'] {\n  background: var(--accent) !important;\n  color: #fff !important;\n  font-size: 15px !important;\n  font-weight: 600 !important;\n  border-radius: var(--input-radius) !important;\n  height: 52px !important;\n  margin-top: 20px !important;\n  width: 100%;\n  border: none;\n  cursor: pointer;\n  transition: background 0.2s, transform 0.15s;\n}\n\nbutton[type='submit']:hover {\n  background: var(--accent-hover) !important;\n  transform: translateY(-1px);\n}\n\nbutton[type='submit']:active { transform: translateY(0); }"
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.4,
+      "position": [
+        1120,
+        736
+      ],
+      "id": "6f704d3e-9e4b-4f35-97d6-920d0201c8ba",
+      "name": "Form: Resume Submission",
+      "webhookId": "5dc79528-fe0f-41df-88bf-984770a3f66a",
+      "notesInFlow": true,
+      "notes": "Collects user inputs (name, target role, job source, job details) and uploads the resume PDF via an n8n public form trigger."
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Resume ready",
+        "completionMessage": "=Your tailored resume for \"{{ $json.job_title }}\" is ready!\n\nOpen your Google Doc here:\n{{ $json.docUrl }}\n\nTip: To download as a Word document, go to File → Download → Microsoft Word (.docx) in Google Docs.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 1,
+      "position": [
+        4384,
+        736
+      ],
+      "id": "8dd29b82-f2c2-4e2d-9847-55fef332b051",
+      "name": "Form Ending: Return Resume Link",
+      "webhookId": "f0295d66-8417-40e5-8ef4-2cec310a1fdd",
+      "notesInFlow": true,
+      "notes": "Displays the final success message to the user and returns the Google Docs link for the tailored resume."
+    },
+    {
+      "parameters": {
+        "jsCode": "// FIX Bug 6: The original workflow had no output step — users submitted the form\n// and never received their tailored resume link. This node builds the response\n// data that the Form Response node will display.\n\nconst docId = $('Build Formatting Requests').first().json.docId;\nconst fullName = $('Merge Resume Text + Job Description').first().json['full_name'];\nconst jobTitle = $('Merge Resume Text + Job Description').first().json['job_title'];\nconst docUrl = `https://docs.google.com/document/d/${docId}/edit`;\n\nreturn [{\n  json: {\n    docId,\n    docUrl,\n    full_name: fullName,\n    job_title: jobTitle,\n    message: `Your tailored resume for the ${jobTitle} role is ready! Click the link below to view and download your Google Doc.`,\n    resumeLink: docUrl\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4160,
+        736
+      ],
+      "id": "9069104b-662c-4d2f-b5c9-fbf9a3f155e1",
+      "name": "Build Response",
+      "notesInFlow": true,
+      "notes": "Builds the final response payload (docId, docUrl, and message) used by the form completion node to show the resume link."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://docs.googleapis.com/v1/documents/{{ $json.docId }}:batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDocsOAuth2Api",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "requests",
+              "value": "={{ $json.requests }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3936,
+        736
+      ],
+      "id": "7e4e633a-5095-466a-a88d-d36e0d0fa9ba",
+      "name": "Apply Formatting to Doc",
+      "notesInFlow": true,
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "aGsvpI5iTv5fHc7O",
+          "name": "Google Docs account"
+        }
+      },
+      "notes": "Sends a Google Docs batchUpdate request to write the generated resume content and apply consistent formatting in the target document."
+    },
+    {
+      "parameters": {
+        "jsCode": "let html = $('Generate Tailored Resume').item.json.candidates[0].content.parts[0].text;\n\n// Strip accidental markdown fences\nhtml = html\n  .replace(/```html/gi, '')\n  .replace(/```/g, '')\n  .trim();\n\nconst docId = $('Create Google Doc').item.json.id;\nconst requests = [];\nlet cursor = 1;\n\nfunction stripTags(str) {\n  return str\n    .replace(/<strong[^>]*>(.*?)<\\/strong>/gi, '$1')\n    .replace(/<em[^>]*>(.*?)<\\/em>/gi, '$1')\n    .replace(/<b[^>]*>(.*?)<\\/b>/gi, '$1')\n    .replace(/<i[^>]*>(.*?)<\\/i>/gi, '$1')\n    .replace(/<a[^>]*>(.*?)<\\/a>/gi, '$1')\n    .replace(/<[^>]+>/g, '')\n    .replace(/\\*\\*([^*]+)\\*\\*/g, '$1')\n    .replace(/\\*([^*]+)\\*/g, '$1')\n    .replace(/&amp;/g, '&')\n    .replace(/&lt;/g, '<')\n    .replace(/&gt;/g, '>')\n    .replace(/&nbsp;/g, ' ')\n    .replace(/&#39;/g, \"'\")\n    .replace(/&quot;/g, '\"')\n    .trim();\n}\n\nfunction insertBlock(text, { paragraphStyle = {}, textStyle = {}, bullet = false } = {}) {\n  const trimmed = text.replace(/\\n/g, ' ').trim();\n  if (!trimmed) return;\n\n  const content = trimmed + '\\n';\n  const startIndex = cursor;\n  const endIndex = cursor + content.length;\n\n  requests.push({ insertText: { location: { index: cursor }, text: content } });\n\n  if (Object.keys(paragraphStyle).length) {\n    requests.push({\n      updateParagraphStyle: {\n        range: { startIndex, endIndex },\n        paragraphStyle,\n        fields: Object.keys(paragraphStyle).join(',')\n      }\n    });\n  }\n\n  if (Object.keys(textStyle).length) {\n    requests.push({\n      updateTextStyle: {\n        range: { startIndex, endIndex },\n        textStyle,\n        fields: Object.keys(textStyle).join(',')\n      }\n    });\n  }\n\n  if (bullet) {\n    requests.push({\n      createParagraphBullets: {\n        range: { startIndex, endIndex: endIndex - 1 },\n        bulletPreset: 'BULLET_DISC_CIRCLE_SQUARE'\n      }\n    });\n  }\n\n  cursor = endIndex;\n}\n\nrequests.push({\n  updateDocumentStyle: {\n    documentStyle: {\n      marginTop:    { magnitude: 54, unit: 'PT' },\n      marginBottom: { magnitude: 54, unit: 'PT' },\n      marginLeft:   { magnitude: 54, unit: 'PT' },\n      marginRight:  { magnitude: 54, unit: 'PT' }\n    },\n    fields: 'marginTop,marginBottom,marginLeft,marginRight'\n  }\n});\n\nconst tokenRegex = /<(h1|h2|h3|p|ul|ol)[^>]*>([\\s\\S]*?)<\\/\\1>/gi;\nlet match;\n\nwhile ((match = tokenRegex.exec(html)) !== null) {\n  const tag = match[1].toLowerCase();\n  const inner = match[2];\n  const text = stripTags(inner);\n\n  if (tag === 'h1') {\n    insertBlock(text, {\n      paragraphStyle: {\n        alignment: 'CENTER',\n        spaceAbove: { magnitude: 0, unit: 'PT' },\n        spaceBelow: { magnitude: 4, unit: 'PT' }\n      },\n      textStyle: {\n        bold: true,\n        fontSize: { magnitude: 24, unit: 'PT' },\n        weightedFontFamily: { fontFamily: 'Calibri' },\n        foregroundColor: { color: { rgbColor: { red: 0.1, green: 0.1, blue: 0.1 } } }\n      }\n    });\n\n  } else if (tag === 'h2') {\n    insertBlock(text, {\n      paragraphStyle: {\n        alignment: 'START',\n        spaceAbove: { magnitude: 14, unit: 'PT' },\n        spaceBelow: { magnitude: 3, unit: 'PT' }\n      },\n      textStyle: {\n        bold: true,\n        underline: true,\n        fontSize: { magnitude: 11, unit: 'PT' },\n        weightedFontFamily: { fontFamily: 'Calibri' },\n        foregroundColor: { color: { rgbColor: { red: 0.18, green: 0.18, blue: 0.55 } } }\n      }\n    });\n\n  } else if (tag === 'h3') {\n    insertBlock(text, {\n      paragraphStyle: {\n        alignment: 'START',\n        spaceAbove: { magnitude: 8, unit: 'PT' },\n        spaceBelow: { magnitude: 2, unit: 'PT' }\n      },\n      textStyle: {\n        bold: true,\n        fontSize: { magnitude: 10.5, unit: 'PT' },\n        weightedFontFamily: { fontFamily: 'Calibri' },\n        foregroundColor: { color: { rgbColor: { red: 0.1, green: 0.1, blue: 0.1 } } }\n      }\n    });\n\n  } else if (tag === 'p') {\n    const isContact = /\\|/.test(inner) && (/@/.test(inner) || /\\+\\d/.test(inner) || /linkedin/i.test(inner));\n    insertBlock(text, {\n      paragraphStyle: {\n        alignment: isContact ? 'CENTER' : 'START',\n        spaceAbove: { magnitude: 0, unit: 'PT' },\n        spaceBelow: { magnitude: isContact ? 8 : 4, unit: 'PT' },\n        lineSpacing: 115\n      },\n      textStyle: {\n        fontSize: { magnitude: 10, unit: 'PT' },\n        weightedFontFamily: { fontFamily: 'Calibri' },\n        foregroundColor: { color: { rgbColor: { red: 0.2, green: 0.2, blue: 0.2 } } }\n      }\n    });\n\n  } else if (tag === 'ul' || tag === 'ol') {\n    const liRegex = /<li[^>]*>([\\s\\S]*?)<\\/li>/gi;\n    let liMatch;\n    while ((liMatch = liRegex.exec(inner)) !== null) {\n      const liText = stripTags(liMatch[1]);\n      if (!liText) continue;\n      insertBlock(liText, {\n        paragraphStyle: {\n          alignment: 'START',\n          spaceAbove: { magnitude: 1, unit: 'PT' },\n          spaceBelow: { magnitude: 1, unit: 'PT' },\n          lineSpacing: 115,\n          indentStart:     { magnitude: 18, unit: 'PT' },\n          indentFirstLine: { magnitude: -18, unit: 'PT' }\n        },\n        textStyle: {\n          fontSize: { magnitude: 10, unit: 'PT' },\n          weightedFontFamily: { fontFamily: 'Calibri' },\n          foregroundColor: { color: { rgbColor: { red: 0.2, green: 0.2, blue: 0.2 } } }\n        },\n        bullet: true\n      });\n    }\n  }\n}\n\nreturn [{ json: { docId, requests } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3712,
+        736
+      ],
+      "id": "886e4281-16d2-4ef2-b752-ba6a8e0efc6b",
+      "name": "Build Formatting Requests",
+      "notesInFlow": true,
+      "notes": "Converts the HTML resume output into Google Docs API batchUpdate requests (insert text, headings, bullets, spacing, and margins)."
+    },
+    {
+      "parameters": {
+        "folderId": "default",
+        "title": "={{ $('Merge Resume Text + Job Description').item.json['full_name'] }} — {{ $('Merge Resume Text + Job Description').item.json['job_title'] }} Resume"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        3488,
+        736
+      ],
+      "id": "108067f6-9c96-4900-bffd-902900318fc7",
+      "name": "Create Google Doc",
+      "notesInFlow": true,
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "aGsvpI5iTv5fHc7O",
+          "name": "Google Docs account"
+        }
+      },
+      "notes": "Creates a new Google Doc named with the candidate and target role; this document will hold the tailored resume."
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.prompt }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        3136,
+        736
+      ],
+      "id": "0d5c6dcf-92af-43e9-ba02-1063ddc85e14",
+      "name": "Generate Tailored Resume",
+      "notesInFlow": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jBl2fMTNBp4p05I5",
+          "name": "INRN live Google Gemini(PaLM) Api account"
+        }
+      },
+      "notes": "Calls the Gemini model with the constructed prompt to produce a tailored resume as clean HTML based on the job description and extracted resume text."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "field-prompt",
+              "name": "prompt",
+              "value": "=You are an expert resume writer and ATS (Applicant Tracking System) specialist with 15+ years of experience helping candidates land interviews at top companies.\n\nYour task is to rewrite the candidate's resume so it is perfectly tailored to the job description provided. The output must be clean, professional HTML — nothing else.\n\n---\nCANDIDATE NAME:\n{{ $json['full_name'] }}\n\nTARGET JOB TITLE:\n{{ $json['job_title'] }}\n\nJOB DESCRIPTION:\n{{ $json['job_description_text'] }}\n\nCANDIDATE'S ORIGINAL RESUME:\n{{ $json['resume_text'] }}\n\n---\nSTEP-BY-STEP INSTRUCTIONS:\n\n1. ANALYZE the job description:\n   - Extract required skills, tools, technologies, and keywords\n   - Identify the seniority level and core responsibilities\n   - Note any preferred qualifications or certifications\n\n2. ANALYZE the candidate's resume:\n   - Identify relevant experience, skills, and achievements\n   - Find transferable skills that map to the job description\n   - Note quantifiable achievements (numbers, percentages, revenue, team sizes)\n\n3. REWRITE the resume following these rules:\n   - Write a 3-4 line Professional Summary tailored specifically to this role\n   - Mirror keywords from the job description naturally (do not keyword-stuff)\n   - Lead every bullet point with a strong action verb: Led, Built, Optimized, Reduced, Launched, Drove, Delivered, Managed, Designed, Improved\n   - Quantify achievements wherever the original resume supports it (%, $, time saved, team size, users)\n   - Reorder sections to lead with the most relevant content for this role\n   - Keep each bullet point to 1-2 lines maximum\n   - NEVER invent, fabricate, or exaggerate any experience or qualification not present in the original resume\n   - Only include PROJECTS and CERTIFICATIONS sections if the candidate actually has projects or certifications in their original resume\n\n---\nOUTPUT RULES:\n- Return ONLY valid HTML\n- No markdown, no code fences, no backticks, no commentary, no explanations\n- Use exactly the HTML structure below\n- Omit optional sections (PROJECTS, CERTIFICATIONS) if not applicable\n\n---\nREQUIRED HTML STRUCTURE:\n\n<h1 style=\"text-align:center\">{{ $json['full_name'] }}</h1>\n<p style=\"text-align:center\">[Email] | [Phone] | [LinkedIn or Portfolio URL]</p>\n\n<h2>PROFESSIONAL SUMMARY</h2>\n<p>[3-4 sentence summary tailored to the target role. Mention years of experience, key specialisms, and value proposition.]</p>\n\n<h2>CORE SKILLS</h2>\n<ul>\n  <li>[Skill relevant to job description]</li>\n  <li>[Continue for 6-10 skills max]</li>\n</ul>\n\n<h2>PROFESSIONAL EXPERIENCE</h2>\n<h3>[Job Title] — [Company Name] | [Start Month Year] – [End Month Year or Present]</h3>\n<ul>\n  <li>[Achievement bullet starting with action verb, quantified where possible]</li>\n  <li>[Repeat for 3-5 bullets per role]</li>\n</ul>\n\n<h2>EDUCATION</h2>\n<p>[Degree Name] — [Institution Name] — [Graduation Year]</p>\n\n<!-- Include PROJECTS only if the candidate has projects in their original resume -->\n<h2>PROJECTS</h2>\n<ul>\n  <li><strong>[Project Name]:</strong> [One-line impact statement with outcome]</li>\n</ul>\n\n<!-- Include CERTIFICATIONS only if the candidate has certifications in their original resume -->\n<h2>CERTIFICATIONS</h2>\n<ul>\n  <li>[Certification Name] — [Issuing Body] — [Year]</li>\n</ul>\n\nReturn ONLY the HTML. Nothing else.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2944,
+        736
+      ],
+      "id": "ef9f8ef2-a862-4f8e-8586-9017f327d7af",
+      "name": "Build Prompt",
+      "notesInFlow": true,
+      "notes": "Builds the LLM prompt by combining user details, the job description text, and the extracted resume text, while enforcing strict output rules."
+    },
+    {
+      "parameters": {
+        "jsCode": "// FIX Bug 3 & 4: extractFromFile outputs ONLY { text: '...' }, discarding\n// job_description_text and all form fields. We re-merge here by pulling\n// the full context from Pre-Extract Binary Check (which has everything)\n// and attaching the extracted resume text from Extract Resume Text.\n\nconst fullItem = $('Pre-Extract Binary Check').first();\nconst extractedItem = $input.first();\n\nconst resumeText = (extractedItem.json.text ?? '').trim();\n\nif (!resumeText) {\n  throw new Error('Could not extract text from the uploaded PDF. Make sure the PDF is not scanned/image-only.');\n}\n\nreturn [{\n  json: {\n    ...fullItem.json,\n    resume_text: resumeText\n    // job_description_text, full_name, job_title etc. are preserved from fullItem.json\n  },\n  binary: fullItem.binary\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2720,
+        736
+      ],
+      "id": "a37b54e8-a48a-45d7-ad88-08c2b21e1dc2",
+      "name": "Merge Resume Text + Job Description",
+      "notesInFlow": true,
+      "notes": "Merges extracted PDF text back into the original form payload so downstream nodes have both resume_text and job_description_text (and preserves binary data)."
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "resume_pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        2496,
+        736
+      ],
+      "id": "94594862-0b0f-4536-9c27-abb914dd0ee0",
+      "name": "Extract Resume Text",
+      "notesInFlow": true,
+      "notes": "Extracts plaintext from the uploaded resume PDF (binary property resume_pdf) for use in the tailoring prompt."
+    },
+    {
+      "parameters": {
+        "jsCode": "// FIX Bug 3: extractFromFile would replace the entire item and lose job_description_text.\n// Instead we extract the PDF text ourselves via the binary data and merge everything\n// into one item so Build Prompt has access to BOTH fields.\n//\n// n8n's extractFromFile node cannot be used here without data loss, so we hand the\n// binary key name to the next node and let the built-in Extract node run, then\n// we recombine with a Code node immediately after.\n//\n// Strategy: pass through the full merged item; the Extract node follows and we\n// re-merge in the next Code node.\n\nconst item = $input.first();\n\n// Ensure resume_pdf binary is present (defensive re-check after branch merge).\nif (!item.binary || !item.binary.resume_pdf) {\n  throw new Error('Missing resume PDF binary at extraction stage. Ensure the form upload is sending a file.');\n}\n\nreturn [item];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        736
+      ],
+      "id": "b2dd6bad-9979-4891-a9a0-5b3434732260",
+      "name": "Pre-Extract Binary Check",
+      "notesInFlow": true,
+      "notes": "Verifies the resume PDF binary exists before extraction and passes the item through unchanged to avoid losing binary data."
+    },
+    {
+      "parameters": {
+        "jsCode": "// FIX Bug 2: Set nodes drop binary. Use Code node to preserve binary\n// while also setting the job_description_text field from the pasted value.\n\nconst formItem = $('Form: Resume Submission').first();\nconst jobDescriptionText = (formItem.json['job_description'] ?? '').trim();\n\nreturn [{\n  json: {\n    ...formItem.json,\n    job_description_text: jobDescriptionText\n  },\n  binary: formItem.binary\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2016,
+        832
+      ],
+      "id": "5b255739-1264-47d7-9423-4aefe386790b",
+      "name": "Set: Job Description from Paste",
+      "notesInFlow": true,
+      "notes": "When the user pastes the job description, copies it into job_description_text and preserves the uploaded resume PDF binary."
+    },
+    {
+      "parameters": {
+        "jsCode": "// FIX Bug 1: Jina AI returns the scraped text in $json.data (responseFormat:'text'),\n// NOT $json.body. Previous workflow mapped $json.body which was always undefined.\n//\n// FIX Bug 2: Set nodes silently drop binary data. Instead of using a Set node\n// we use Code nodes on both branches so we can explicitly carry the binary forward.\n\nconst formItem = $('Form: Resume Submission').first();\nconst jinaItem = $input.first();\n\n// $json.data is where n8n places the raw text body for responseFormat:'text'\nconst jobDescriptionText = (jinaItem.json.data ?? '').trim();\n\nif (!jobDescriptionText) {\n  throw new Error('Jina AI returned an empty response. The LinkedIn URL may be inaccessible or require login. Try pasting the job description directly.');\n}\n\nreturn [{\n  json: {\n    ...formItem.json,\n    job_description_text: jobDescriptionText\n  },\n  binary: formItem.binary\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2016,
+        640
+      ],
+      "id": "27f2d95e-f54f-4f72-b4f2-4f3fca4deffd",
+      "name": "Set: Job Description from URL",
+      "notesInFlow": true,
+      "notes": "When the user provides a LinkedIn URL, uses the scraped text as job_description_text and preserves the uploaded resume PDF binary."
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://r.jina.ai/' + $('Form: Resume Submission').item.json['linkedin_url'] }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1792,
+        640
+      ],
+      "id": "0a891383-ef2d-4faf-98b5-449dce583815",
+      "name": "Scrape Job via Jina AI",
+      "notesInFlow": true,
+      "notes": "Fetches the LinkedIn job page via Jina AI and returns the page text so it can be used as the job description."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "condition-linkedin",
+              "leftValue": "={{ $json['input_type'] }}",
+              "rightValue": "LinkedIn job URL",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1568,
+        736
+      ],
+      "id": "65b4ec33-8210-454d-a29e-1ecaa581e80b",
+      "name": "Route: LinkedIn or Paste?",
+      "notesInFlow": true,
+      "notes": "Routes the flow based on input_type: scrape job text from LinkedIn URL or use the pasted job description."
+    },
+    {
+      "parameters": {
+        "jsCode": "// FIX: Validate required inputs before proceeding.\n// Ensures the user actually filled in whichever job-source field they chose.\nconst item = $input.first();\nconst inputType = item.json['input_type'] ?? '';\nconst jobDescription = (item.json['job_description'] ?? '').trim();\nconst linkedinUrl = (item.json['linkedin_url'] ?? '').trim();\n\nif (inputType === 'LinkedIn job URL' && !linkedinUrl) {\n  throw new Error('You selected \"LinkedIn job URL\" but did not provide a URL. Please go back and fill in the LinkedIn URL field.');\n}\n\nif (inputType === 'Paste job description' && !jobDescription) {\n  throw new Error('You selected \"Paste job description\" but left it empty. Please go back and paste the job description.');\n}\n\n// Also normalise binary key so downstream nodes always find resume_pdf.\nitem.binary = item.binary ?? {};\nif (!item.binary.resume_pdf) {\n  const keys = Object.keys(item.binary);\n  const resumeKey = keys.find(k => k === 'resume_pdf' || k.startsWith('resume_pdf'));\n  if (resumeKey) {\n    item.binary.resume_pdf = item.binary[resumeKey];\n    if (resumeKey !== 'resume_pdf') delete item.binary[resumeKey];\n  } else if (keys.length === 1) {\n    const onlyKey = keys[0];\n    item.binary.resume_pdf = item.binary[onlyKey];\n    if (onlyKey !== 'resume_pdf') delete item.binary[onlyKey];\n  }\n}\n\nif (!item.binary.resume_pdf) {\n  throw new Error('No resume PDF found in the upload. Please resubmit with a valid PDF file.');\n}\n\nreturn [item];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        736
+      ],
+      "id": "471c3ea6-4c67-4f5a-9189-bc1b0ee858b9",
+      "name": "Validate & Normalize Input",
+      "notesInFlow": true,
+      "notes": "Validates required fields based on the chosen job source and normalizes the resume PDF binary key to resume_pdf for consistent downstream processing."
+    },
+    {
+      "parameters": {
+        "content": "PHASE 1 - INPUT AND ROUTING\n\nCollect inputs from the form, validate required fields, and route the workflow based on how the job details are provided (LinkedIn URL or pasted description).",
+        "height": 332,
+        "width": 684
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        592
+      ],
+      "id": "d1140720-2ec0-4c7e-8c3f-6b8a3b2dcb06",
+      "name": "Note: Phase 1 - Input and Routing"
+    },
+    {
+      "parameters": {
+        "content": "PHASE 2 - GET JOB DESCRIPTION TEXT\n\nIf the user provides a LinkedIn URL, scrape it via Jina AI and map the scraped text into job_description_text.\n\nIf the user pastes the job description, copy it into job_description_text.\n\nBoth paths preserve the uploaded resume PDF binary for later extraction.",
+        "height": 584,
+        "width": 648
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        432
+      ],
+      "id": "bb669c09-7362-4b56-bdb2-3858ba377219",
+      "name": "Note: Phase 2 - Job Description"
+    },
+    {
+      "parameters": {
+        "content": "PHASE 3 - EXTRACT AND MERGE RESUME TEXT\n\nValidate the resume PDF binary is present.\nExtract text from the PDF.\nMerge the extracted resume_text back into the main payload so the prompt builder has both resume_text and job_description_text.",
+        "height": 436,
+        "width": 652
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2432,
+        576
+      ],
+      "id": "34f08f3b-b306-4490-bb0f-bcea6c388665",
+      "name": "Note: Phase 3 - Extract Resume Text"
+    },
+    {
+      "parameters": {
+        "content": "PHASE 4 - GENERATE RESUME CONTENT\n\nBuild the LLM prompt using candidate info, job_description_text, and resume_text.\nGenerate a tailored resume as clean HTML (no markdown).",
+        "height": 492,
+        "width": 756
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3104,
+        576
+      ],
+      "id": "76b57258-2e01-42e0-9ff0-cf82bda122ca",
+      "name": "Note: Phase 4 - Generate HTML Resume"
+    },
+    {
+      "parameters": {
+        "content": "PHASE 5 - CREATE AND FORMAT GOOGLE DOC\n\nCreate a new Google Doc.\nConvert the generated HTML into Google Docs batchUpdate requests.\nApply formatting and insert the resume content into the document.",
+        "height": 480,
+        "width": 720
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3872,
+        576
+      ],
+      "id": "62eebb83-03eb-4c3b-88b3-a572a21eaa17",
+      "name": "Note: Phase 5 - Google Doc Output"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Form: Resume Submission": {
+      "main": [
+        [
+          {
+            "node": "Validate & Normalize Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Response": {
+      "main": [
+        [
+          {
+            "node": "Form Ending: Return Resume Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Formatting to Doc": {
+      "main": [
+        [
+          {
+            "node": "Build Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Formatting Requests": {
+      "main": [
+        [
+          {
+            "node": "Apply Formatting to Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Build Formatting Requests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Tailored Resume": {
+      "main": [
+        [
+          {
+            "node": "Create Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate Tailored Resume",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Resume Text + Job Description": {
+      "main": [
+        [
+          {
+            "node": "Build Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Resume Text": {
+      "main": [
+        [
+          {
+            "node": "Merge Resume Text + Job Description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pre-Extract Binary Check": {
+      "main": [
+        [
+          {
+            "node": "Extract Resume Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set: Job Description from Paste": {
+      "main": [
+        [
+          {
+            "node": "Pre-Extract Binary Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set: Job Description from URL": {
+      "main": [
+        [
+          {
+            "node": "Pre-Extract Binary Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Job via Jina AI": {
+      "main": [
+        [
+          {
+            "node": "Set: Job Description from URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route: LinkedIn or Paste?": {
+      "main": [
+        [
+          {
+            "node": "Scrape Job via Jina AI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set: Job Description from Paste",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate & Normalize Input": {
+      "main": [
+        [
+          {
+            "node": "Route: LinkedIn or Paste?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "84121e89-fa88-4b0a-8f30-bcb2f6bc575b",
+  "meta": {
+    "instanceId": "8a925e89005df3311e574d607d5c6949926f3d7930a998f36d5648d219219f2c"
+  },
+  "id": "_ptBz1UXByZtaHZR3u5F8",
+  "tags": []
+}
